@@ -60,6 +60,9 @@
     margin: 32px auto 64px;
     padding: 0 20px;
   }
+  main.locked {
+    display: none;
+  }
   .card {
     background: var(--card);
     border: 1px solid var(--border);
@@ -95,12 +98,6 @@
   }
   .field.full {
     grid-column: 1 / -1;
-  }
-  .field-label-row {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 8px;
   }
   label {
     font-size: 12px;
@@ -178,45 +175,64 @@
     color: var(--muted);
     margin-top: 24px;
   }
-  #systemToast {
+  #modalOverlay {
     position: fixed;
-    top: 18px;
-    right: 18px;
-    max-width: 320px;
-    background: var(--card);
-    border: 1px solid var(--success-border);
-    border-left: 4px solid var(--success-border);
-    border-radius: 8px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.18);
-    padding: 12px 16px;
-    font-size: 12.5px;
-    color: var(--text);
+    inset: 0;
+    background: rgba(6, 27, 48, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     z-index: 1000;
-    transition: opacity 0.4s ease;
   }
-  #systemToast.hidden {
-    opacity: 0;
-    pointer-events: none;
-  }
-  #systemToast .toast-title {
-    font-weight: 700;
-    color: var(--navy);
-    margin-bottom: 4px;
-  }
-  #paymentIdField {
+  #modalOverlay.hidden {
     display: none;
   }
-  #paymentIdReveal {
+  #modalDialog {
+    position: relative;
+    background: var(--card);
+    width: 380px;
+    max-width: 90%;
+    border-radius: 10px;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.35);
+    overflow: hidden;
+  }
+  #modalClose {
+    position: absolute;
+    top: 8px;
+    right: 10px;
     background: none;
     border: none;
-    padding: 0;
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--navy);
-    text-decoration: underline;
+    color: #fff;
+    font-size: 20px;
+    line-height: 1;
+    padding: 4px 8px;
     cursor: pointer;
-    text-transform: none;
-    letter-spacing: normal;
+  }
+  #modalDialog .modal-header {
+    background: var(--navy-dark);
+    color: #fff;
+    padding: 14px 20px;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  #modalDialog .modal-body {
+    padding: 20px;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  #modalDialog .modal-footer {
+    padding: 14px 20px 20px;
+    display: flex;
+    justify-content: flex-end;
+  }
+  #btnModalOk {
+    background: var(--navy);
+    color: #fff;
+    min-width: 80px;
+  }
+  #btnModalOk:hover {
+    background: var(--navy-dark);
   }
 </style>
 </head>
@@ -230,12 +246,20 @@
   </div>
 </header>
 
-<div id="systemToast">
-  <div class="toast-title">System Notice</div>
-  <div>The Payment ID field is now collapsed by default. Use "Show field" to expand it before entering a value.</div>
+<div id="modalOverlay">
+  <div id="modalDialog" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button type="button" id="modalClose" aria-label="Close">&times;</button>
+    <div class="modal-header" id="modalTitle">System Notice</div>
+    <div class="modal-body">
+      This workstation was updated. Click OK to continue to the Payment Entry screen.
+    </div>
+    <div class="modal-footer">
+      <button type="button" id="btnModalOk">OK</button>
+    </div>
+  </div>
 </div>
 
-<main>
+<main class="locked" id="mainContent">
   <div class="card">
     <div class="card-header">
       <h2>New Payment Entry</h2>
@@ -248,10 +272,7 @@
       <div class="section-label">Payment Identification</div>
 
       <div class="field">
-        <div class="field-label-row">
-          <label for="paymentIdField">Payment ID</label>
-          <button type="button" id="paymentIdReveal">Show field</button>
-        </div>
+        <label for="paymentIdField">Payment ID</label>
         <input type="text" id="paymentIdField" name="PaymentID" autocomplete="off">
       </div>
       <div class="field">
@@ -320,10 +341,12 @@
 </main>
 
 <script>
-  document.getElementById('paymentIdReveal').addEventListener('click', function () {
-    document.getElementById('paymentIdField').style.display = 'block';
-    this.style.display = 'none';
-  });
+  function dismissModal() {
+    document.getElementById('modalOverlay').classList.add('hidden');
+    document.getElementById('mainContent').classList.remove('locked');
+  }
+  document.getElementById('btnModalOk').addEventListener('click', dismissModal);
+  document.getElementById('modalClose').addEventListener('click', dismissModal);
 
   document.getElementById('paymentForm').addEventListener('submit', function (e) {
     e.preventDefault();
@@ -337,10 +360,6 @@
     document.getElementById('paymentForm').reset();
     document.getElementById('divConfirmation').style.display = 'none';
   });
-
-  setTimeout(function () {
-    document.getElementById('systemToast').classList.add('hidden');
-  }, 6000);
 </script>
 
 </body>
