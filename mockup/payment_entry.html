@@ -227,11 +227,11 @@
       <div class="section-label">Payment Identification</div>
 
       <div class="field">
-        <label for="paymentIdField">Payment ID</label>
+        <label for="paymentIdField">Transaction Reference</label>
         <input type="text" id="paymentIdField" name="PaymentID" autocomplete="off">
       </div>
       <div class="field">
-        <label for="paymentTypeField">Payment Type</label>
+        <label for="paymentTypeField">Transfer Method</label>
         <select id="paymentTypeField" name="PaymentType">
           <option value="Wire">Wire</option>
           <option value="ACH">ACH</option>
@@ -241,33 +241,33 @@
       <div class="section-label">Payer</div>
 
       <div class="field">
-        <label for="payerNameField">Payer Name</label>
+        <label for="payerNameField">Originator Name</label>
         <input type="text" id="payerNameField" name="PayerName" autocomplete="off">
       </div>
       <div class="field">
-        <label for="payerAccountField">Payer Account</label>
+        <label for="payerAccountField">Originator Account</label>
         <input type="text" id="payerAccountField" name="PayerAccount" autocomplete="off">
       </div>
 
       <div class="section-label">Payee</div>
 
       <div class="field">
-        <label for="payeeNameField">Payee Name</label>
+        <label for="payeeNameField">Beneficiary Name</label>
         <input type="text" id="payeeNameField" name="PayeeName" autocomplete="off">
       </div>
       <div class="field">
-        <label for="payeeAccountField">Payee Account</label>
+        <label for="payeeAccountField">Beneficiary Account</label>
         <input type="text" id="payeeAccountField" name="PayeeAccount" autocomplete="off">
       </div>
 
       <div class="section-label">Transaction Details</div>
 
       <div class="field">
-        <label for="amountField">Amount</label>
+        <label for="amountField">Transfer Amount</label>
         <input type="text" id="amountField" name="Amount" autocomplete="off">
       </div>
       <div class="field">
-        <label for="currencyField">Currency</label>
+        <label for="currencyField">Settlement Currency</label>
         <select id="currencyField" name="Currency">
           <option value="USD">USD</option>
           <option value="EUR">EUR</option>
@@ -277,11 +277,11 @@
         </select>
       </div>
       <div class="field">
-        <label for="paymentDateField">Payment Date</label>
+        <label for="paymentDateField">Value Date</label>
         <input type="text" id="paymentDateField" name="PaymentDate" placeholder="MM/DD/YYYY" autocomplete="off">
       </div>
       <div class="field full">
-        <label for="memoField">Memo / Reference</label>
+        <label for="memoField">Notes</label>
         <textarea id="memoField" name="Memo"></textarea>
       </div>
 
