@@ -60,9 +60,6 @@
     margin: 32px auto 64px;
     padding: 0 20px;
   }
-  main.locked {
-    display: none;
-  }
   .card {
     background: var(--card);
     border: 1px solid var(--border);
@@ -151,11 +148,11 @@
     border: none;
     cursor: pointer;
   }
-  #btnSubmit {
+  #btnSubmitAction {
     background: var(--navy);
     color: #fff;
   }
-  #btnSubmit:hover {
+  #btnSubmitAction:hover {
     background: var(--navy-dark);
   }
   #divConfirmation {
@@ -175,50 +172,30 @@
     color: var(--muted);
     margin-top: 24px;
   }
-  #modalOverlay {
+  #systemToast {
     position: fixed;
-    inset: 0;
-    background: rgba(6, 27, 48, 0.55);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-  }
-  #modalOverlay.hidden {
-    display: none;
-  }
-  #modalDialog {
+    top: 18px;
+    right: 18px;
+    max-width: 320px;
     background: var(--card);
-    width: 420px;
-    max-width: 90%;
-    border-radius: 10px;
-    box-shadow: 0 12px 32px rgba(0,0,0,0.35);
-    overflow: hidden;
-  }
-  #modalDialog .modal-header {
-    background: var(--navy-dark);
-    color: #fff;
-    padding: 14px 20px;
-    font-size: 15px;
-    font-weight: 600;
-  }
-  #modalDialog .modal-body {
-    padding: 20px;
-    font-size: 13px;
+    border: 1px solid var(--success-border);
+    border-left: 4px solid var(--success-border);
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+    padding: 12px 16px;
+    font-size: 12.5px;
     color: var(--text);
-    line-height: 1.5;
+    z-index: 1000;
+    transition: opacity 0.4s ease;
   }
-  #modalDialog .modal-footer {
-    padding: 14px 20px 20px;
-    display: flex;
-    justify-content: flex-end;
+  #systemToast.hidden {
+    opacity: 0;
+    pointer-events: none;
   }
-  #btnAcknowledge {
-    background: var(--navy);
-    color: #fff;
-  }
-  #btnAcknowledge:hover {
-    background: var(--navy-dark);
+  #systemToast .toast-title {
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 4px;
   }
 </style>
 </head>
@@ -232,21 +209,12 @@
   </div>
 </header>
 
-<div id="modalOverlay">
-  <div id="modalDialog" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <div class="modal-header" id="modalTitle">Fraud Prevention Verification</div>
-    <div class="modal-body">
-      This session has been flagged for a routine fraud-prevention check before
-      new payment entries can be keyed. Please acknowledge this notice to
-      continue to the Payment Entry screen.
-    </div>
-    <div class="modal-footer">
-      <button type="button" id="btnAcknowledge">Acknowledge &amp; Continue</button>
-    </div>
-  </div>
+<div id="systemToast">
+  <div class="toast-title">System Notice</div>
+  <div>Field labels for this workstation were refreshed in the latest release. Layout is unchanged.</div>
 </div>
 
-<main class="locked" id="mainContent">
+<main>
   <div class="card">
     <div class="card-header">
       <h2>New Payment Entry</h2>
@@ -259,12 +227,12 @@
       <div class="section-label">Payment Identification</div>
 
       <div class="field">
-        <label for="txtPaymentId">Payment ID</label>
-        <input type="text" id="txtPaymentId" name="PaymentID" autocomplete="off">
+        <label for="paymentIdField">Payment ID</label>
+        <input type="text" id="paymentIdField" name="PaymentID" autocomplete="off">
       </div>
       <div class="field">
-        <label for="selPaymentType">Payment Type</label>
-        <select id="selPaymentType" name="PaymentType">
+        <label for="paymentTypeField">Payment Type</label>
+        <select id="paymentTypeField" name="PaymentType">
           <option value="Wire">Wire</option>
           <option value="ACH">ACH</option>
         </select>
@@ -273,34 +241,34 @@
       <div class="section-label">Payer</div>
 
       <div class="field">
-        <label for="txtPayerName">Payer Name</label>
-        <input type="text" id="txtPayerName" name="PayerName" autocomplete="off">
+        <label for="payerNameField">Payer Name</label>
+        <input type="text" id="payerNameField" name="PayerName" autocomplete="off">
       </div>
       <div class="field">
-        <label for="txtPayerAccount">Payer Account</label>
-        <input type="text" id="txtPayerAccount" name="PayerAccount" autocomplete="off">
+        <label for="payerAccountField">Payer Account</label>
+        <input type="text" id="payerAccountField" name="PayerAccount" autocomplete="off">
       </div>
 
       <div class="section-label">Payee</div>
 
       <div class="field">
-        <label for="txtPayeeName">Payee Name</label>
-        <input type="text" id="txtPayeeName" name="PayeeName" autocomplete="off">
+        <label for="payeeNameField">Payee Name</label>
+        <input type="text" id="payeeNameField" name="PayeeName" autocomplete="off">
       </div>
       <div class="field">
-        <label for="txtPayeeAccount">Payee Account</label>
-        <input type="text" id="txtPayeeAccount" name="PayeeAccount" autocomplete="off">
+        <label for="payeeAccountField">Payee Account</label>
+        <input type="text" id="payeeAccountField" name="PayeeAccount" autocomplete="off">
       </div>
 
       <div class="section-label">Transaction Details</div>
 
       <div class="field">
-        <label for="txtAmount">Amount</label>
-        <input type="text" id="txtAmount" name="Amount" autocomplete="off">
+        <label for="amountField">Amount</label>
+        <input type="text" id="amountField" name="Amount" autocomplete="off">
       </div>
       <div class="field">
-        <label for="selCurrency">Currency</label>
-        <select id="selCurrency" name="Currency">
+        <label for="currencyField">Currency</label>
+        <select id="currencyField" name="Currency">
           <option value="USD">USD</option>
           <option value="EUR">EUR</option>
           <option value="GBP">GBP</option>
@@ -309,17 +277,17 @@
         </select>
       </div>
       <div class="field">
-        <label for="dtPaymentDate">Payment Date</label>
-        <input type="text" id="dtPaymentDate" name="PaymentDate" placeholder="MM/DD/YYYY" autocomplete="off">
+        <label for="paymentDateField">Payment Date</label>
+        <input type="text" id="paymentDateField" name="PaymentDate" placeholder="MM/DD/YYYY" autocomplete="off">
       </div>
       <div class="field full">
-        <label for="txtMemo">Memo / Reference</label>
-        <textarea id="txtMemo" name="Memo"></textarea>
+        <label for="memoField">Memo / Reference</label>
+        <textarea id="memoField" name="Memo"></textarea>
       </div>
 
       <div class="actions">
-        <button type="button" id="btnClear">Clear</button>
-        <button type="submit" id="btnSubmit">Process Payment</button>
+        <button type="button" id="btnClearAction">Clear</button>
+        <button type="submit" id="btnSubmitAction">Process Payment</button>
       </div>
     </form>
   </div>
@@ -330,21 +298,20 @@
 <script>
   document.getElementById('paymentForm').addEventListener('submit', function (e) {
     e.preventDefault();
-    var paymentId = document.getElementById('txtPaymentId').value || '(unknown)';
+    var paymentId = document.getElementById('paymentIdField').value || '(unknown)';
     var banner = document.getElementById('divConfirmation');
     banner.textContent = 'Payment ' + paymentId + ' submitted successfully.';
     banner.style.display = 'block';
   });
 
-  document.getElementById('btnClear').addEventListener('click', function () {
+  document.getElementById('btnClearAction').addEventListener('click', function () {
     document.getElementById('paymentForm').reset();
     document.getElementById('divConfirmation').style.display = 'none';
   });
 
-  document.getElementById('btnAcknowledge').addEventListener('click', function () {
-    document.getElementById('modalOverlay').classList.add('hidden');
-    document.getElementById('mainContent').classList.remove('locked');
-  });
+  setTimeout(function () {
+    document.getElementById('systemToast').classList.add('hidden');
+  }, 4000);
 </script>
 
 </body>
