@@ -96,6 +96,12 @@
   .field.full {
     grid-column: 1 / -1;
   }
+  .field-label-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+  }
   label {
     font-size: 12px;
     font-weight: 600;
@@ -103,7 +109,7 @@
     text-transform: uppercase;
     letter-spacing: 0.4px;
   }
-  input, select, textarea, .input-like {
+  input, select, textarea {
     font-family: inherit;
     font-size: 14px;
     padding: 10px 12px;
@@ -112,14 +118,10 @@
     background: #fbfcfd;
     color: var(--text);
   }
-  input:focus, select:focus, textarea:focus, .input-like:focus {
+  input:focus, select:focus, textarea:focus {
     outline: none;
     border-color: var(--navy);
     background: #fff;
-  }
-  .input-like {
-    display: block;
-    min-height: 20px;
   }
   textarea {
     resize: vertical;
@@ -201,6 +203,21 @@
     color: var(--navy);
     margin-bottom: 4px;
   }
+  #paymentIdField {
+    display: none;
+  }
+  #paymentIdReveal {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--navy);
+    text-decoration: underline;
+    cursor: pointer;
+    text-transform: none;
+    letter-spacing: normal;
+  }
 </style>
 </head>
 <body>
@@ -215,7 +232,7 @@
 
 <div id="systemToast">
   <div class="toast-title">System Notice</div>
-  <div>Field labels for this workstation were refreshed in the latest release. Layout is unchanged.</div>
+  <div>The Payment ID field is now collapsed by default. Use "Show field" to expand it before entering a value.</div>
 </div>
 
 <main>
@@ -231,11 +248,14 @@
       <div class="section-label">Payment Identification</div>
 
       <div class="field">
-        <label for="paymentIdField">Transaction Reference</label>
-        <div id="paymentIdField" class="input-like" contenteditable="true" data-name="PaymentID" role="textbox" aria-label="Transaction Reference"></div>
+        <div class="field-label-row">
+          <label for="paymentIdField">Payment ID</label>
+          <button type="button" id="paymentIdReveal">Show field</button>
+        </div>
+        <input type="text" id="paymentIdField" name="PaymentID" autocomplete="off">
       </div>
       <div class="field">
-        <label for="paymentTypeField">Transfer Method</label>
+        <label for="paymentTypeField">Payment Type</label>
         <select id="paymentTypeField" name="PaymentType">
           <option value="Wire">Wire</option>
           <option value="ACH">ACH</option>
@@ -245,33 +265,33 @@
       <div class="section-label">Payer</div>
 
       <div class="field">
-        <label for="payerNameField">Originator Name</label>
+        <label for="payerNameField">Payer Name</label>
         <input type="text" id="payerNameField" name="PayerName" autocomplete="off">
       </div>
       <div class="field">
-        <label for="payerAccountField">Originator Account</label>
+        <label for="payerAccountField">Payer Account</label>
         <input type="text" id="payerAccountField" name="PayerAccount" autocomplete="off">
       </div>
 
       <div class="section-label">Payee</div>
 
       <div class="field">
-        <label for="payeeNameField">Beneficiary Name</label>
+        <label for="payeeNameField">Payee Name</label>
         <input type="text" id="payeeNameField" name="PayeeName" autocomplete="off">
       </div>
       <div class="field">
-        <label for="payeeAccountField">Beneficiary Account</label>
+        <label for="payeeAccountField">Payee Account</label>
         <input type="text" id="payeeAccountField" name="PayeeAccount" autocomplete="off">
       </div>
 
       <div class="section-label">Transaction Details</div>
 
       <div class="field">
-        <label for="amountField">Transfer Amount</label>
+        <label for="amountField">Amount</label>
         <input type="text" id="amountField" name="Amount" autocomplete="off">
       </div>
       <div class="field">
-        <label for="currencyField">Settlement Currency</label>
+        <label for="currencyField">Currency</label>
         <select id="currencyField" name="Currency">
           <option value="USD">USD</option>
           <option value="EUR">EUR</option>
@@ -281,11 +301,11 @@
         </select>
       </div>
       <div class="field">
-        <label for="paymentDateField">Value Date</label>
+        <label for="paymentDateField">Payment Date</label>
         <input type="text" id="paymentDateField" name="PaymentDate" placeholder="MM/DD/YYYY" autocomplete="off">
       </div>
       <div class="field full">
-        <label for="memoField">Notes</label>
+        <label for="memoField">Memo / Reference</label>
         <textarea id="memoField" name="Memo"></textarea>
       </div>
 
@@ -300,9 +320,14 @@
 </main>
 
 <script>
+  document.getElementById('paymentIdReveal').addEventListener('click', function () {
+    document.getElementById('paymentIdField').style.display = 'block';
+    this.style.display = 'none';
+  });
+
   document.getElementById('paymentForm').addEventListener('submit', function (e) {
     e.preventDefault();
-    var paymentId = document.getElementById('paymentIdField').textContent.trim() || '(unknown)';
+    var paymentId = document.getElementById('paymentIdField').value || '(unknown)';
     var banner = document.getElementById('divConfirmation');
     banner.textContent = 'Payment ' + paymentId + ' submitted successfully.';
     banner.style.display = 'block';
@@ -310,13 +335,12 @@
 
   document.getElementById('btnClearAction').addEventListener('click', function () {
     document.getElementById('paymentForm').reset();
-    document.getElementById('paymentIdField').textContent = '';
     document.getElementById('divConfirmation').style.display = 'none';
   });
 
   setTimeout(function () {
     document.getElementById('systemToast').classList.add('hidden');
-  }, 4000);
+  }, 6000);
 </script>
 
 </body>
