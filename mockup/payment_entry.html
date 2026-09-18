@@ -55,13 +55,35 @@
     color: #cbd8e5;
     margin-top: 2px;
   }
+  #quickRefBar {
+    background: #fff8e6;
+    border-bottom: 1px solid var(--accent);
+    padding: 10px 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  #quickRefBar label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--navy-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  #quickRefBar input {
+    font-family: inherit;
+    font-size: 13px;
+    padding: 6px 10px;
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    background: #fff;
+    color: var(--text);
+    width: 220px;
+  }
   main {
     max-width: 760px;
     margin: 32px auto 64px;
     padding: 0 20px;
-  }
-  main.locked {
-    display: none;
   }
   .card {
     background: var(--card);
@@ -105,6 +127,15 @@
     color: var(--muted);
     text-transform: uppercase;
     letter-spacing: 0.4px;
+  }
+  .field-note {
+    font-size: 13px;
+    color: var(--muted);
+    font-style: italic;
+    padding: 10px 12px;
+    border: 1px dashed var(--border);
+    border-radius: 6px;
+    background: #f5f7fa;
   }
   input, select, textarea {
     font-family: inherit;
@@ -175,65 +206,6 @@
     color: var(--muted);
     margin-top: 24px;
   }
-  #modalOverlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(6, 27, 48, 0.55);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-  }
-  #modalOverlay.hidden {
-    display: none;
-  }
-  #modalDialog {
-    position: relative;
-    background: var(--card);
-    width: 380px;
-    max-width: 90%;
-    border-radius: 10px;
-    box-shadow: 0 12px 32px rgba(0,0,0,0.35);
-    overflow: hidden;
-  }
-  #modalClose {
-    position: absolute;
-    top: 8px;
-    right: 10px;
-    background: none;
-    border: none;
-    color: #fff;
-    font-size: 20px;
-    line-height: 1;
-    padding: 4px 8px;
-    cursor: pointer;
-  }
-  #modalDialog .modal-header {
-    background: var(--navy-dark);
-    color: #fff;
-    padding: 14px 20px;
-    font-size: 15px;
-    font-weight: 600;
-  }
-  #modalDialog .modal-body {
-    padding: 20px;
-    font-size: 13px;
-    color: var(--text);
-    line-height: 1.5;
-  }
-  #modalDialog .modal-footer {
-    padding: 14px 20px 20px;
-    display: flex;
-    justify-content: flex-end;
-  }
-  #btnModalOk {
-    background: var(--navy);
-    color: #fff;
-    min-width: 80px;
-  }
-  #btnModalOk:hover {
-    background: var(--navy-dark);
-  }
 </style>
 </head>
 <body>
@@ -246,20 +218,12 @@
   </div>
 </header>
 
-<div id="modalOverlay">
-  <div id="modalDialog" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <button type="button" id="modalClose" aria-label="Close">&times;</button>
-    <div class="modal-header" id="modalTitle">System Notice</div>
-    <div class="modal-body">
-      This workstation was updated. Click OK to continue to the Payment Entry screen.
-    </div>
-    <div class="modal-footer">
-      <button type="button" id="btnModalOk">OK</button>
-    </div>
-  </div>
+<div id="quickRefBar">
+  <label for="paymentIdField">Payment ID</label>
+  <input type="text" id="paymentIdField" name="PaymentID" autocomplete="off" placeholder="Enter payment ID">
 </div>
 
-<main class="locked" id="mainContent">
+<main>
   <div class="card">
     <div class="card-header">
       <h2>New Payment Entry</h2>
@@ -272,8 +236,8 @@
       <div class="section-label">Payment Identification</div>
 
       <div class="field">
-        <label for="paymentIdField">Payment ID</label>
-        <input type="text" id="paymentIdField" name="PaymentID" autocomplete="off">
+        <label>Payment ID</label>
+        <div class="field-note">Set above in the Quick Reference bar</div>
       </div>
       <div class="field">
         <label for="paymentTypeField">Payment Type</label>
@@ -341,13 +305,6 @@
 </main>
 
 <script>
-  function dismissModal() {
-    document.getElementById('modalOverlay').classList.add('hidden');
-    document.getElementById('mainContent').classList.remove('locked');
-  }
-  document.getElementById('btnModalOk').addEventListener('click', dismissModal);
-  document.getElementById('modalClose').addEventListener('click', dismissModal);
-
   document.getElementById('paymentForm').addEventListener('submit', function (e) {
     e.preventDefault();
     var paymentId = document.getElementById('paymentIdField').value || '(unknown)';
@@ -358,6 +315,7 @@
 
   document.getElementById('btnClearAction').addEventListener('click', function () {
     document.getElementById('paymentForm').reset();
+    document.getElementById('paymentIdField').value = '';
     document.getElementById('divConfirmation').style.display = 'none';
   });
 </script>
