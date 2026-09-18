@@ -103,7 +103,7 @@
     text-transform: uppercase;
     letter-spacing: 0.4px;
   }
-  input, select, textarea {
+  input, select, textarea, .input-like {
     font-family: inherit;
     font-size: 14px;
     padding: 10px 12px;
@@ -112,10 +112,14 @@
     background: #fbfcfd;
     color: var(--text);
   }
-  input:focus, select:focus, textarea:focus {
+  input:focus, select:focus, textarea:focus, .input-like:focus {
     outline: none;
     border-color: var(--navy);
     background: #fff;
+  }
+  .input-like {
+    display: block;
+    min-height: 20px;
   }
   textarea {
     resize: vertical;
@@ -228,7 +232,7 @@
 
       <div class="field">
         <label for="paymentIdField">Transaction Reference</label>
-        <input type="text" id="paymentIdField" name="PaymentID" autocomplete="off">
+        <div id="paymentIdField" class="input-like" contenteditable="true" data-name="PaymentID" role="textbox" aria-label="Transaction Reference"></div>
       </div>
       <div class="field">
         <label for="paymentTypeField">Transfer Method</label>
@@ -298,7 +302,7 @@
 <script>
   document.getElementById('paymentForm').addEventListener('submit', function (e) {
     e.preventDefault();
-    var paymentId = document.getElementById('paymentIdField').value || '(unknown)';
+    var paymentId = document.getElementById('paymentIdField').textContent.trim() || '(unknown)';
     var banner = document.getElementById('divConfirmation');
     banner.textContent = 'Payment ' + paymentId + ' submitted successfully.';
     banner.style.display = 'block';
@@ -306,6 +310,7 @@
 
   document.getElementById('btnClearAction').addEventListener('click', function () {
     document.getElementById('paymentForm').reset();
+    document.getElementById('paymentIdField').textContent = '';
     document.getElementById('divConfirmation').style.display = 'none';
   });
 
