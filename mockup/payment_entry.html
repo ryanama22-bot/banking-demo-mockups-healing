@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Core Banking - Payment Entry</title>
+<style>
+  :root {
+    --navy: #0b2e4f;
+    --navy-dark: #061b30;
+    --accent: #c8a34d;
+    --bg: #eef1f5;
+    --card: #ffffff;
+    --text: #1c2b3a;
+    --muted: #5b6b7b;
+    --border: #d6dde5;
+    --success-bg: #e6f6ec;
+    --success-border: #3fae63;
+    --success-text: #1f6b3a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+  header {
+    background: linear-gradient(90deg, var(--navy-dark), var(--navy));
+    color: #fff;
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+  header .logo {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: var(--navy-dark);
+    font-size: 18px;
+  }
+  header .title {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+  header .subtitle {
+    font-size: 12px;
+    color: #cbd8e5;
+    margin-top: 2px;
+  }
+  main {
+    max-width: 760px;
+    margin: 32px auto 64px;
+    padding: 0 20px;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: 0 4px 14px rgba(11, 46, 79, 0.08);
+    overflow: hidden;
+  }
+  .card-header {
+    background: #f5f7fa;
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+  }
+  .card-header h2 {
+    margin: 0;
+    font-size: 16px;
+    color: var(--navy);
+  }
+  .card-header p {
+    margin: 4px 0 0;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  form {
+    padding: 24px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 20px;
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .field.full {
+    grid-column: 1 / -1;
+  }
+  label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  input, select, textarea {
+    font-family: inherit;
+    font-size: 14px;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #fbfcfd;
+    color: var(--text);
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--navy);
+    background: #fff;
+  }
+  textarea {
+    resize: vertical;
+    min-height: 44px;
+  }
+  .section-label {
+    grid-column: 1 / -1;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 6px;
+    margin-top: 4px;
+  }
+  .actions {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  button {
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 11px 24px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+  }
+  #btnSubmit {
+    background: var(--navy);
+    color: #fff;
+  }
+  #btnSubmit:hover {
+    background: var(--navy-dark);
+  }
+  #divConfirmation {
+    display: none;
+    margin: 0 20px 24px;
+    padding: 14px 18px;
+    border-radius: 8px;
+    background: var(--success-bg);
+    border: 1px solid var(--success-border);
+    color: var(--success-text);
+    font-size: 14px;
+    font-weight: 600;
+  }
+  footer {
+    text-align: center;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 24px;
+  }
+  #modalOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(6, 27, 48, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  #modalOverlay.hidden {
+    display: none;
+  }
+  #modalDialog {
+    background: var(--card);
+    width: 420px;
+    max-width: 90%;
+    border-radius: 10px;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.35);
+    overflow: hidden;
+  }
+  #modalDialog .modal-header {
+    background: var(--navy-dark);
+    color: #fff;
+    padding: 14px 20px;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  #modalDialog .modal-body {
+    padding: 20px;
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  #modalDialog .modal-footer {
+    padding: 14px 20px 20px;
+    display: flex;
+    justify-content: flex-end;
+  }
+  #btnAcknowledge {
+    background: var(--navy);
+    color: #fff;
+  }
+  #btnAcknowledge:hover {
+    background: var(--navy-dark);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">CB</div>
+  <div>
+    <div class="title">Core Banking Payment Processing</div>
+    <div class="subtitle">Payments &amp; Transfers &middot; Teller Workstation (Demo)</div>
+  </div>
+</header>
+
+<div id="modalOverlay">
+  <div id="modalDialog" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-header" id="modalTitle">Fraud Prevention Verification</div>
+    <div class="modal-body">
+      This session has been flagged for a routine fraud-prevention check before
+      new payment entries can be keyed. Please acknowledge this notice to
+      continue to the Payment Entry screen.
+    </div>
+    <div class="modal-footer">
+      <button type="button" id="btnAcknowledge">Acknowledge &amp; Continue</button>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="card">
+    <div class="card-header">
+      <h2>New Payment Entry</h2>
+      <p>Enter payment details below and submit for processing.</p>
+    </div>
+
+    <div id="divConfirmation"></div>
+
+    <form id="paymentForm">
+      <div class="section-label">Payment Identification</div>
+
+      <div class="field">
+        <label for="txtPaymentId">Payment ID</label>
+        <input type="text" id="txtPaymentId" name="PaymentID" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="selPaymentType">Payment Type</label>
+        <select id="selPaymentType" name="PaymentType">
+          <option value="Wire">Wire</option>
+          <option value="ACH">ACH</option>
+        </select>
+      </div>
+
+      <div class="section-label">Payer</div>
+
+      <div class="field">
+        <label for="txtPayerName">Payer Name</label>
+        <input type="text" id="txtPayerName" name="PayerName" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="txtPayerAccount">Payer Account</label>
+        <input type="text" id="txtPayerAccount" name="PayerAccount" autocomplete="off">
+      </div>
+
+      <div class="section-label">Payee</div>
+
+      <div class="field">
+        <label for="txtPayeeName">Payee Name</label>
+        <input type="text" id="txtPayeeName" name="PayeeName" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="txtPayeeAccount">Payee Account</label>
+        <input type="text" id="txtPayeeAccount" name="PayeeAccount" autocomplete="off">
+      </div>
+
+      <div class="section-label">Transaction Details</div>
+
+      <div class="field">
+        <label for="txtAmount">Amount</label>
+        <input type="text" id="txtAmount" name="Amount" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="selCurrency">Currency</label>
+        <select id="selCurrency" name="Currency">
+          <option value="USD">USD</option>
+          <option value="EUR">EUR</option>
+          <option value="GBP">GBP</option>
+          <option value="CAD">CAD</option>
+          <option value="JPY">JPY</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="dtPaymentDate">Payment Date</label>
+        <input type="text" id="dtPaymentDate" name="PaymentDate" placeholder="MM/DD/YYYY" autocomplete="off">
+      </div>
+      <div class="field full">
+        <label for="txtMemo">Memo / Reference</label>
+        <textarea id="txtMemo" name="Memo"></textarea>
+      </div>
+
+      <div class="actions">
+        <button type="button" id="btnClear">Clear</button>
+        <button type="submit" id="btnSubmit">Process Payment</button>
+      </div>
+    </form>
+  </div>
+
+  <footer>Core Banking Demo Environment &middot; Not connected to a live ledger</footer>
+</main>
+
+<script>
+  document.getElementById('paymentForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var paymentId = document.getElementById('txtPaymentId').value || '(unknown)';
+    var banner = document.getElementById('divConfirmation');
+    banner.textContent = 'Payment ' + paymentId + ' submitted successfully.';
+    banner.style.display = 'block';
+  });
+
+  document.getElementById('btnClear').addEventListener('click', function () {
+    document.getElementById('paymentForm').reset();
+    document.getElementById('divConfirmation').style.display = 'none';
+  });
+
+  document.getElementById('btnAcknowledge').addEventListener('click', function () {
+    document.getElementById('modalOverlay').classList.add('hidden');
+  });
+</script>
+
+</body>
+</html>
