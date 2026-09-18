@@ -60,6 +60,9 @@
     margin: 32px auto 64px;
     padding: 0 20px;
   }
+  main.locked {
+    display: none;
+  }
   .card {
     background: var(--card);
     border: 1px solid var(--border);
@@ -243,7 +246,7 @@
   </div>
 </div>
 
-<main>
+<main class="locked" id="mainContent">
   <div class="card">
     <div class="card-header">
       <h2>New Payment Entry</h2>
@@ -340,6 +343,7 @@
 
   document.getElementById('btnAcknowledge').addEventListener('click', function () {
     document.getElementById('modalOverlay').classList.add('hidden');
+    document.getElementById('mainContent').classList.remove('locked');
   });
 </script>
 
